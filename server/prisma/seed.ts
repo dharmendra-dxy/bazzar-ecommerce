@@ -20,8 +20,8 @@ async function main(){
     }
 
     // if no existingSuperAdmin then create a new:
-    const salt=10;
-    const hashedPassword = await bcrypt.hash(password, salt);
+    const salt = process.env.BCRYPT_SALT
+    const hashedPassword = await bcrypt.hash(password, salt!);
     const superAdminUser = await prisma.user.create({
         data: {
             email,
