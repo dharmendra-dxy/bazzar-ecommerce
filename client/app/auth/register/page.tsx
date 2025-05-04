@@ -1,19 +1,30 @@
 'use client'
 
+import { protectSignupAction } from '@/actions/auth.action'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@radix-ui/react-dropdown-menu'
 import Image from 'next/image'
 import Link from 'next/link'
-import React, { useState } from 'react'
+import React, { useState } from 'react';
+import { toast } from "sonner";
+
+import { useAuthStore } from '@/store/useAuth.store'
+import { useRouter } from 'next/navigation'
+// import { useRouter } from 'next/router'
 
 const page = () => {
+    
+    const {register} = useAuthStore();
 
+    const router = useRouter();
+    
     const [formData, setFormData] = useState({
         name: '',
         email: '',
         password: '',
     });
+
 
     const handleOnChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         setFormData((prev) => ({
@@ -22,7 +33,24 @@ const page = () => {
         }));
     }
 
-    console.log("data: ", formData);
+    // handleFormSubmit:
+    const handleFormSubmit = async(event:React.FormEvent) => {
+        event.preventDefault();
+
+        // check first level of validation:
+        const checkFirstValidation = await protectSignupAction(formData.email);
+
+        if(!checkFirstValidation.success){
+            toast.error(checkFirstValidation?.error);
+            return;
+        }
+
+        const userId = await register(formData.name,formData.email ,formData.password);
+        if(userId){
+            toast.success('User Registered sucessfully');
+            router.push('/auth/login');
+        }
+    }
 
 
   return (
@@ -47,7 +75,7 @@ const page = () => {
                     />
                 </div>
 
-                <form className='space-y-4'>
+                <form onSubmit={handleFormSubmit} className='space-y-4'>
                     <div className='space-y-1'>
                         <Label>FullName</Label>
                         <Input

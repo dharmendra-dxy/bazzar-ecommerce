@@ -58,8 +58,9 @@ export const register = async (req: Request, res: Response): Promise<void>=>{
         }
 
         // if user do not exisit, create it:
-        const salt = process.env.BCRYPT_SALT;
-        const hashedPassword = await bcrypt.hash(password, salt!);
+        // const salt = process.env.BCRYPT_SALT!;
+        const salt=10;
+        const hashedPassword = await bcrypt.hash(password, salt);
         const user = await prisma.user.create({
             data: {
                 name,
