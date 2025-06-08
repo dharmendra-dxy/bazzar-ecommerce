@@ -106,6 +106,7 @@ const LoginPage = () => {
                         <Button
                             type='submit'
                             className='w-full'
+                            disabled={isLoading}
                         >
                             {isLoading ? "Login in..." : "Login"}
                         </Button>

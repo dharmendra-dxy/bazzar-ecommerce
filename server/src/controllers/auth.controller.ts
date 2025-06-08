@@ -117,7 +117,7 @@ export const login = async (req:Request, res:Response): Promise<void> => {
         const {accessToken, refreshToken} = generateToken(currentUser.id, currentUser.email, currentUser.role);
 
         // set out token:
-        setTokens(res, accessToken, refreshToken);
+        await setTokens(res, accessToken, refreshToken);
 
         res.status(200).json({
             success: true,
