@@ -55,7 +55,7 @@ export const useAuthStore = create<AuthStore>()(
                 set({isLoading: true, error: null});
                 try {
                     const response = await axiosInstance.post('/login', {
-                         email,password
+                        email,password
                     })
     
                     set({isLoading: false, user:response?.data?.user});

@@ -11,20 +11,17 @@ import { toast } from "sonner";
 
 import { useAuthStore } from '@/store/useAuth.store'
 import { useRouter } from 'next/navigation'
-// import { useRouter } from 'next/router'
+import { ArrowRight } from 'lucide-react'
 
-const page = () => {
+const RegisterPage = () => {
     
-    const {register} = useAuthStore();
-
     const router = useRouter();
-    
+    const {register, isLoading, error} = useAuthStore();
     const [formData, setFormData] = useState({
         name: '',
         email: '',
         password: '',
     });
-
 
     const handleOnChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         setFormData((prev) => ({
@@ -45,10 +42,14 @@ const page = () => {
             return;
         }
 
+        // register api calling:
         const userId = await register(formData.name,formData.email ,formData.password);
         if(userId){
             toast.success('User Registered sucessfully');
             router.push('/auth/login');
+        }
+        else{
+            toast.error(error);
         }
     }
 
@@ -115,8 +116,13 @@ const page = () => {
 
                     <Button 
                     type='submit'
+                    disabled={isLoading}
                     className='w-full'>
-                        Create Account
+                        {isLoading ? "Creating Account...." : (
+                            <>
+                                Create Account<ArrowRight size={6}/>
+                            </>
+                        )}
                     </Button>
 
                     <p className='text-center text-red-500 text-sm font-medium'>
@@ -132,4 +138,4 @@ const page = () => {
   )
 }
 
-export default page
+export default RegisterPage
