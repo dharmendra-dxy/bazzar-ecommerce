@@ -20,6 +20,8 @@
     "axios": "^1.9.0",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
+    "jose": "^6.0.11",
+    "jsonwebtoken": "^9.0.2",
     "lucide-react": "^0.501.0",
     "next": "15.3.1",
     "next-themes": "^0.4.6",

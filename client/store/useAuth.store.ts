@@ -38,8 +38,6 @@ export const useAuthStore = create<AuthStore>()(
                     const response = await axiosInstance.post('/register', {
                         name, email,password
                     })
-                    
-                    console.log("response: ", response);
                     set({isLoading: false});
                     return response?.data?.userId
                 } 
