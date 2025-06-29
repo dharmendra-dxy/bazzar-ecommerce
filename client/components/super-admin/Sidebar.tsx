@@ -71,7 +71,7 @@ const SuperAdminSidebar = ({ isOpen, toggle }: SidebarProps) => {
                 <Button
                     variant='default'
                     size='icon'
-                    className="ml-auto"
+                    className="ml-auto cursor-pointer"
                     onClick={toggle}
                 >
                     {
