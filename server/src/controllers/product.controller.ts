@@ -86,23 +86,42 @@ export const fetchAllProductForAdmin = async (req: AuthenticatedRequest, res:Res
         console.error(e);
         res.status(500).json({
             success: false,
-            error: "Some error Occured while creating product",
+            error: "Some error Occured",
         })
     }
 }
 
 
-
 // Get a Single Product {id}
 export const getProductById = async (req: AuthenticatedRequest, res:Response): Promise<void> =>{
+
     try {
-        
+        // get id from params:
+        const {id} = req.params;
+
+        const product = await prisma.product.findUnique({
+            where: {id}
+        });
+
+        if(!product){
+            res.status(404).json({
+                success: false,
+                error: "No product found",
+            })
+        }
+
+        res.json(200).json({
+            success: true,
+            message: "Product found succesfully",
+            product
+        })
+
 
     } catch (e) {
         console.error(e);
         res.status(500).json({
             success: false,
-            error: "Some error Occured while creating product",
+            error: "Some error Occured",
         })
     }
 }
@@ -111,7 +130,48 @@ export const getProductById = async (req: AuthenticatedRequest, res:Response): P
 // Update a Product [ADMIN]
 export const updateProduct = async (req: AuthenticatedRequest, res:Response): Promise<void> =>{
     try {
-        
+        // [TODO] : implement image update functionality
+
+        const {id} = req.params;
+
+        const {
+            name,          
+            brand,         
+            description,   
+            category,      
+            gender,        
+            sizes,        
+            colors,        
+            price,         
+            stock,
+            images,
+            soldCount,
+            rating,
+        } = req.body;
+
+        const product = await prisma.product.update({
+            where: {id},
+            data:{
+                name,          
+                brand,         
+                description,   
+                category,      
+                gender,        
+                sizes:sizes.split(','),        
+                colors:colors.split(','),        
+                price: parseFloat(price),         
+                stock: parseInt(stock),
+                images,
+                soldCount:parseInt(soldCount),
+                rating: parseFloat(rating),
+            }
+        });
+
+        res.status(200).json({
+            success: true,
+            message: "Product updated succesfully",
+            product, 
+        })
 
     } catch (e) {
         console.error(e);
