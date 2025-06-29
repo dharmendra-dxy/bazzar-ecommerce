@@ -10,8 +10,6 @@ export async function middleware(request: NextRequest) {
   const accessToken = request.cookies.get("accessToken")?.value;
   const { pathname } = request.nextUrl;
 
-  console.log("accessToken-->: ", accessToken);
-
   if (accessToken) {
     try {
 
