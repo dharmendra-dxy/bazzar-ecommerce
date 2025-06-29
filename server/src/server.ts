@@ -5,6 +5,7 @@ import cors from 'cors';
 import cookieParser from "cookie-parser";
 
 import authRoutes from './routes/auth.routes';
+import productRoutes from './routes/product.routes';
 
 dotenv.config();
 const app = express();
@@ -27,6 +28,7 @@ app.use(cookieParser());
 
 
 app.use('/api/auth', authRoutes);
+app.use('/api/products', productRoutes);
 app.get('/', (req,res) =>{ 
     res.json({ message:"Hello from bazaar"});
 })
