@@ -1,12 +1,66 @@
 
 import { Response } from "express";
 import { AuthenticatedRequest } from "../middlewares/auth.middleware";
+import cloudinary from "../config/cloudinary";
+import { prisma } from "../server";
+import fs from 'fs';
 
 
 // Create a Product [POST]
 export const createProduct = async (req: AuthenticatedRequest, res:Response): Promise<void> =>{
     try {
+        const {
+            name,          
+            brand,         
+            description,   
+            category,      
+            gender,        
+            sizes,        
+            colors,        
+            price,         
+            stock, 
+        } = req.body;
+
         
+        // get images file (multiple):
+        const files = req.files as Express.Multer.File[];
+
+        // upload all images to cloudinary:
+        const uploadPromises = files.map(file => cloudinary.uploader.upload(file.path, {
+            folder: 'ecommerce',
+            })
+        );
+
+        const uploadResults = await Promise.all(uploadPromises);
+        const imageUrls = uploadResults.map(result => result.secure_url);
+
+        const newProduct = await prisma.product.create({
+            data: {
+                name,
+                brand,         
+                description,   
+                category,      
+                gender,        
+                sizes: sizes.split(','),        
+                colors: colors.split(','),        
+                price: parseFloat(price),         
+                stock: parseFloat(stock),
+                images:  imageUrls,
+                soldCount: 0,
+                rating: 0,
+            }
+        })
+
+        // when images are uploaded to cloudinary, delete images from local:
+        // clean the uploaded files:
+        files.forEach(file => fs.unlinkSync(file.path));
+
+        res.status(200).json({
+            success: true,
+            message: "Product created succesfully",
+            product: newProduct, 
+        })
+
 
     } catch (e) {
         console.error(e);
@@ -20,7 +74,13 @@ export const createProduct = async (req: AuthenticatedRequest, res:Response): Pr
 // Fetch All product [ADMIN]
 export const fetchAllProductForAdmin = async (req: AuthenticatedRequest, res:Response): Promise<void> =>{
     try {
-        
+        const products = await prisma.product.findMany({});
+
+        res.status(200).json({
+            success: true,
+            message: "All products fetched succesfull",
+            products
+        })
 
     } catch (e) {
         console.error(e);
