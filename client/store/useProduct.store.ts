@@ -24,7 +24,7 @@ interface ProductState{
     isLoding: boolean,
     error: string | null,
     fetchAllProductsForAdmin: () => Promise<void>,
-    createProduct: (productData: FormData)=> Promise<void>,
+    createProduct: (productData: FormData)=> Promise<Product>,
     updateProduct: (id:string, productData:FormData)=> Promise<void>,
     deleteProduct: (id:string)=> Promise<void>,
     getProduct: (id:string) => Promise<Product | null>
@@ -60,6 +60,7 @@ export const useProductStore = create<ProductState>((set,get)=>({
             });
 
             set({isLoding:false});
+            return response?.data;
         }
         catch(e){
             set({isLoding: false, error: 'Failed to create new product'});
