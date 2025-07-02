@@ -1,5 +1,6 @@
 'use client'
 
+import { protectProductFormAction } from "@/actions/products.action";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -28,9 +29,9 @@ interface FormState {
 const SuperAdminProductAddingPage = () => {
 
   const router = useRouter();
-  const {createProduct, updateProduct, getProduct, isLoding, error} = useProductStore();
+  const { createProduct, updateProduct, getProduct, isLoding, error } = useProductStore();
 
-  const[formState, setFormState] = useState({
+  const [formState, setFormState] = useState({
     name: '',
     brand: '',
     description: '',
@@ -45,50 +46,59 @@ const SuperAdminProductAddingPage = () => {
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
 
   // handleInputChange
-  const handleInputChange = (e:ChangeEvent<HTMLInputElement | HTMLTextAreaElement>)=>{
+  const handleInputChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     setFormState(prev => (
       {
         ...prev,
-        [e.target.name] : e.target.value,
+        [e.target.name]: e.target.value,
       }
     ))
   }
 
   // handleSelectChange:
-  const handleSelectChange = (name: string, value:string) => {
-    setFormState(prev=> (
+  const handleSelectChange = (name: string, value: string) => {
+    setFormState(prev => (
       {
         ...prev,
-        [name] : value,
+        [name]: value,
       }
     ))
   }
 
   // handleToggleSize:
-  const handleToggleSize = (size: string) =>{
-    setSelectedSizes(prev => prev.includes(size) ? (prev.filter(s => s!==size)): ([...prev, size]));
+  const handleToggleSize = (size: string) => {
+    setSelectedSizes(prev => prev.includes(size) ? (prev.filter(s => s !== size)) : ([...prev, size]));
   }
 
   // handleToggleColor:
-  const handleToggleColor = (color: string) =>{
-    setSelectedColors(prev => prev.includes(color) ? (prev.filter(c => c!==color)): ([...prev, color]));
+  const handleToggleColor = (color: string) => {
+    setSelectedColors(prev => prev.includes(color) ? (prev.filter(c => c !== color)) : ([...prev, color]));
   }
 
   // handleFileChange:
   const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
-    if(e.target.files){
+    if (e.target.files) {
       setSelectedFiles(Array.from(e.target.files));
     }
   };
 
 
   // handleFormSubmit:
-  const handleFormSubmit = async(e:FormEvent<HTMLFormElement>) => {
+  const handleFormSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+
+    // handle first level of validation by -> arcjet:
+    const checkFirstValidation = await protectProductFormAction();
+    if (!checkFirstValidation.success) {
+      toast.error(checkFirstValidation?.error);
+      return;
+    }
+
+    // formData and api calling:
     const formData = new FormData();
 
     Object.entries(formState).forEach(([Key, value]) => (
-      formData.append(Key,value)
+      formData.append(Key, value)
     ));
 
     formData.append('sizes', selectedSizes.join(','));
@@ -99,12 +109,15 @@ const SuperAdminProductAddingPage = () => {
     ));
 
     const response = await createProduct(formData);
-    if(response){
+    if (response) {
       router.push('/super-admin/products/list');
       toast.success("Product created Successfully");
     }
+    else {
+      toast.error("Failed");
+    }
 
-    
+
   }
 
   return (
@@ -136,14 +149,14 @@ const SuperAdminProductAddingPage = () => {
               </div>
             </div>
             {
-              selectedFiles.length>0 &&
+              selectedFiles.length > 0 &&
               <div className="mt-4 flex flex-wrap gap-2">
                 {
                   selectedFiles.map((file, index) => (
                     <div key={index} className="relative">
                       <Image
                         src={URL.createObjectURL(file)}
-                        alt={`Preview-${index+1}`}
+                        alt={`Preview-${index + 1}`}
                         width={80}
                         height={80}
                         className="h-20 w-20 object-cover rounded-md"
@@ -176,24 +189,24 @@ const SuperAdminProductAddingPage = () => {
               <Label>
                 Brand Name
               </Label>
-              <Select 
+              <Select
                 name='brand'
                 value={formState.brand}
-                onValueChange={(value) => handleSelectChange('brand', value)}  
+                onValueChange={(value) => handleSelectChange('brand', value)}
               >
                 <SelectTrigger className="mt-1.5 w-full">
-                  <SelectValue placeholder='Select Brand'/>
+                  <SelectValue placeholder='Select Brand' />
                 </SelectTrigger>
                 <SelectContent>
                   {
-                    brands.map(item => 
+                    brands.map(item =>
                       <SelectItem key={item} value={item.toLowerCase()}>{item}</SelectItem>
                     )
                   }
                 </SelectContent>
               </Select>
             </div>
-            
+
             {/* Description */}
             <div>
               <Label>
@@ -213,17 +226,17 @@ const SuperAdminProductAddingPage = () => {
               <Label>
                 Category
               </Label>
-              <Select 
-              name='category'
-              value={formState.category}
-              onValueChange={(value) => handleSelectChange('category', value)}
+              <Select
+                name='category'
+                value={formState.category}
+                onValueChange={(value) => handleSelectChange('category', value)}
               >
                 <SelectTrigger className="mt-1.5 w-full">
-                  <SelectValue placeholder='Select Category'/>
+                  <SelectValue placeholder='Select Category' />
                 </SelectTrigger>
                 <SelectContent>
                   {
-                    categories.map(item => 
+                    categories.map(item =>
                       <SelectItem key={item} value={item.toLowerCase()}>{item}</SelectItem>
                     )
                   }
@@ -236,13 +249,13 @@ const SuperAdminProductAddingPage = () => {
               <Label>
                 Gender
               </Label>
-              <Select 
-              name='gender'
-              value={formState.gender}
-              onValueChange={(value) => handleSelectChange('gender', value)}
+              <Select
+                name='gender'
+                value={formState.gender}
+                onValueChange={(value) => handleSelectChange('gender', value)}
               >
                 <SelectTrigger className="mt-1.5 w-full">
-                  <SelectValue placeholder='Select Gender'/>
+                  <SelectValue placeholder='Select Gender' />
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value={'men'}>Men</SelectItem>
@@ -262,12 +275,12 @@ const SuperAdminProductAddingPage = () => {
                 {
                   sizes.map(item => (
                     <Button
-                    key={item}
-                    type="button"
-                    size='sm'
-                    variant={selectedSizes.includes(item) ? "default" : "outline"}
-                    onClick={()=> handleToggleSize(item)} 
-                    className="cursor-pointer"
+                      key={item}
+                      type="button"
+                      size='sm'
+                      variant={selectedSizes.includes(item) ? "default" : "outline"}
+                      onClick={() => handleToggleSize(item)}
+                      className="cursor-pointer"
                     >
                       {item}
                     </Button>
@@ -284,11 +297,11 @@ const SuperAdminProductAddingPage = () => {
               <div className="mt-1.5 flex flex-wrap gap-2 ">
                 {
                   colors.map(item => (
-                    <Button 
-                    key={item.name}
-                    type="button"
-                    className={`h-8 w-8 rounded-full cursor-pointer hover:${item.class} ${item.class} ${selectedColors.includes(item.name) ? "ring-2 ring-primary ring-offset-2" : ""}`}
-                    onClick={()=> handleToggleColor(item.name)}
+                    <Button
+                      key={item.name}
+                      type="button"
+                      className={`h-8 w-8 rounded-full cursor-pointer hover:${item.class} ${item.class} ${selectedColors.includes(item.name) ? "ring-2 ring-primary ring-offset-2" : ""}`}
+                      onClick={() => handleToggleColor(item.name)}
                     >
                     </Button>
                   ))
@@ -323,15 +336,15 @@ const SuperAdminProductAddingPage = () => {
                 onChange={handleInputChange}
               />
             </div>
-            
+
             {/* Button */}
-            <Button 
+            <Button
               type="submit"
               className="w-full mt-8"
               disabled={isLoding}
             >
-              {isLoding ? "Creating..." : "Create" }<Plus className="mt-1"/>
-              
+              {isLoding ? "Creating..." : "Create"}<Plus className="mt-1" />
+
             </Button>
 
           </div>
