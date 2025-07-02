@@ -1,6 +1,6 @@
 'use client';
 
-import React, {useEffect} from "react";
+import React, {useEffect, useRef} from "react";
 import { useProductStore } from "@/store/useProduct.store";
 import { Button } from "@/components/ui/button";
 import { Pencil, PlusCircle, Trash2 } from "lucide-react";
@@ -8,15 +8,24 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import Image from "next/image";
 import LoadingScreen from "@/components/common/LoadingScreen";
 import { toast } from "sonner";
+import { useRouter } from "next/navigation";
 
 
 const SuperAdminProductListingPage = () => {
 
+  const router = useRouter();
   const {products, fetchAllProductsForAdmin, deleteProduct, isLoding, error} = useProductStore();
 
+  const productFetchRef = useRef(false);
+
   useEffect(()=>{
-    fetchAllProductsForAdmin();
+    if(!productFetchRef.current){
+      fetchAllProductsForAdmin();
+      productFetchRef.current= true;
+    }
   },[fetchAllProductsForAdmin]);
+
+  console.log("products: ", products);
 
 
   // handleDeleteProduct:
@@ -29,7 +38,6 @@ const SuperAdminProductListingPage = () => {
       }
       else{
         toast.error("Error occured while deleting product");
-
       }
     }
   }
@@ -43,7 +51,7 @@ const SuperAdminProductListingPage = () => {
         {/* Heading and Add Button */}
         <header className="flex items-center justify-between">
           <h1 className="font-bold text-2xl">All Listed Products</h1>
-          <Button> <PlusCircle/>  <span>Add New Product</span></Button>
+          <Button type="button" onClick={()=> router.push(`/super-admin/products/add`)}> <PlusCircle/>  <span>Add New Product</span></Button>
         </header>
 
         {/* Table */}
@@ -99,6 +107,7 @@ const SuperAdminProductListingPage = () => {
                       <TableCell>
                           <div className="flex justify-end gap-2">
                             <Button
+                              onClick={()=> router.push(`/super-admin/products/add?id=${product.id}`)}
                               variant='ghost'
                               size='icon'
                             >

@@ -10,9 +10,8 @@ import { brands, categories, colors, sizes, } from "@/constant/super-admin/addPr
 import { useProductStore } from "@/store/useProduct.store";
 import { Plus, Upload } from "lucide-react";
 import Image from "next/image";
-import { useRouter } from "next/navigation";
-import { join } from "path";
-import React, { ChangeEvent, FormEvent, useState } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
+import React, { ChangeEvent, FormEvent, useState, useEffect } from "react";
 import { toast } from "sonner";
 
 interface FormState {
@@ -44,6 +43,34 @@ const SuperAdminProductAddingPage = () => {
   const [selectedSizes, setSelectedSizes] = useState<string[]>([]);
   const [selectedColors, setSelectedColors] = useState<string[]>([]);
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
+
+  // For EDIT PRODUCT:
+  // check params for id : if id-> add page ,  else: update/edit page
+  const searchParams = useSearchParams();
+  const editId = searchParams.get("id");
+  const isEditMode = editId ? true : false;
+
+  useEffect(() => {
+    if (isEditMode) {
+      getProduct(editId as string).then(product => {
+        if (product) {
+          setFormState({
+            name: product.name,
+            brand: product.brand,
+            description: product.description,
+            category: product.category,
+            gender: product.gender,
+            price: `${product.price}`,
+            stock: `${product.stock}`,
+          })
+          setSelectedSizes(product.sizes);
+          setSelectedColors(product.colors);
+        }
+      })
+    }
+  }, [isEditMode, getProduct, editId]);
+
+
 
   // handleInputChange
   const handleInputChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -104,27 +131,29 @@ const SuperAdminProductAddingPage = () => {
     formData.append('sizes', selectedSizes.join(','));
     formData.append('colors', selectedColors.join(','));
 
-    selectedFiles.forEach(file => (
-      formData.append('images', file)
-    ));
+    // append images only while creating
+    if (!isEditMode) {
+      selectedFiles.forEach(file => (
+        formData.append('images', file)
+      ));
+    }
 
-    const response = await createProduct(formData);
+    // call create/ update API
+    const response = isEditMode ? await updateProduct(editId as string, formData) : await createProduct(formData);
     if (response) {
       router.push('/super-admin/products/list');
-      toast.success("Product created Successfully");
+      toast.success(`Product ${isEditMode ? "Updated" : "Created"} Successfully`);
     }
     else {
-      toast.error("Failed");
+      toast.error("Process Failed");
     }
-
-
   }
 
   return (
     <div className="p-6">
       <div className="flex flex-col gap-6">
         <header className="flex items-center justify-between">
-          <h1 className="font-bold text-2xl">Add Product</h1>
+          <h1 className="font-bold text-2xl">{isEditMode ? "Edit" : "Add"} Product</h1>
         </header>
 
         <form
@@ -133,41 +162,46 @@ const SuperAdminProductAddingPage = () => {
         >
 
           {/* Image upload */}
-          <div className="mt-2 w-full flex flex-col items-center justify-center rounded-lg border border-dashed border-gray-400 p-12">
-            <div className="text-center">
-              <Upload className="mx-auto h-12 w-12 text-gray-400" />
-              <div className="mt-4 flex text-sm leading-6 text-gray-600">
-                <Label>
-                  <span>Click to browse Images</span>
-                  <input
-                    type="file"
-                    className="sr-only"
-                    multiple
-                    onChange={handleFileChange}
-                  />
-                </Label>
-              </div>
-            </div>
-            {
-              selectedFiles.length > 0 &&
-              <div className="mt-4 flex flex-wrap gap-2">
-                {
-                  selectedFiles.map((file, index) => (
-                    <div key={index} className="relative">
-                      <Image
-                        src={URL.createObjectURL(file)}
-                        alt={`Preview-${index + 1}`}
-                        width={80}
-                        height={80}
-                        className="h-20 w-20 object-cover rounded-md"
+          {
+            isEditMode ? null : (
+              <div className="mt-2 w-full flex flex-col items-center justify-center rounded-lg border border-dashed border-gray-400 p-12">
+                <div className="text-center">
+                  <Upload className="mx-auto h-12 w-12 text-gray-400" />
+                  <div className="mt-4 flex text-sm leading-6 text-gray-600">
+                    <Label>
+                      <span>Click to browse Images</span>
+                      <input
+                        type="file"
+                        className="sr-only"
+                        multiple
+                        onChange={handleFileChange}
                       />
-                    </div>
-                  ))
-                }
+                    </Label>
+                  </div>
+                </div>
+                {
+                  selectedFiles.length > 0 &&
+                  <div className="mt-4 flex flex-wrap gap-2">
+                    {
+                      selectedFiles.map((file, index) => (
+                        <div key={index} className="relative">
+                          <Image
+                            src={URL.createObjectURL(file)}
+                            alt={`Preview-${index + 1}`}
+                            width={80}
+                            height={80}
+                            className="h-20 w-20 object-cover rounded-md"
+                          />
+                        </div>
+                      ))
+                    }
 
+                  </div>
+                }
               </div>
-            }
-          </div>
+            )
+          }
+
 
           <div className="space-y-4">
             {/* Pruduct */}
@@ -343,7 +377,7 @@ const SuperAdminProductAddingPage = () => {
               className="w-full mt-8"
               disabled={isLoding}
             >
-              {isLoding ? "Creating..." : "Create"}<Plus className="mt-1" />
+              {isEditMode ? "Update" : "Create"}<Plus className="mt-1" />
 
             </Button>
 

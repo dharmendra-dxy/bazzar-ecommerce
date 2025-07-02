@@ -48,6 +48,7 @@ export const createProduct = async (req: AuthenticatedRequest, res:Response): Pr
                 images:  imageUrls,
                 soldCount: 0,
                 rating: 0,
+
             }
         })
 
@@ -110,7 +111,7 @@ export const getProductById = async (req: AuthenticatedRequest, res:Response): P
             })
         }
 
-        res.json(200).json({
+        res.status(200).json({
             success: true,
             message: "Product found succesfully",
             product
@@ -144,9 +145,7 @@ export const updateProduct = async (req: AuthenticatedRequest, res:Response): Pr
             colors,        
             price,         
             stock,
-            images,
-            soldCount,
-            rating,
+            rating
         } = req.body;
 
         const product = await prisma.product.update({
@@ -161,9 +160,7 @@ export const updateProduct = async (req: AuthenticatedRequest, res:Response): Pr
                 colors:colors.split(','),        
                 price: parseFloat(price),         
                 stock: parseInt(stock),
-                images,
-                soldCount:parseInt(soldCount),
-                rating: parseFloat(rating),
+                rating: parseInt(rating),
             }
         });
 
