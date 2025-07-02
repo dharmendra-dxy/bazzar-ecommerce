@@ -41,7 +41,6 @@ export const useProductStore = create<ProductState>((set,get)=>({
             const response = await axios.get(`${API_ROUTES.PRODCUTS}/all`,{
                 withCredentials: true,
             });
-            console.log("fetchAllProductsForAdmin: ", response.data.products);
             set({products: response.data.products, isLoding:false});
         }
         catch(e){

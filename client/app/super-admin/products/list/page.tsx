@@ -14,7 +14,7 @@ import { useRouter } from "next/navigation";
 const SuperAdminProductListingPage = () => {
 
   const router = useRouter();
-  const {products, fetchAllProductsForAdmin, deleteProduct, isLoding, error} = useProductStore();
+  const {products, fetchAllProductsForAdmin, deleteProduct, isLoding} = useProductStore();
 
   const productFetchRef = useRef(false);
 
@@ -24,8 +24,6 @@ const SuperAdminProductListingPage = () => {
       productFetchRef.current= true;
     }
   },[fetchAllProductsForAdmin]);
-
-  console.log("products: ", products);
 
 
   // handleDeleteProduct:

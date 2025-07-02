@@ -8,7 +8,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Textarea } from "@/components/ui/textarea";
 import { brands, categories, colors, sizes, } from "@/constant/super-admin/addProducts";
 import { useProductStore } from "@/store/useProduct.store";
-import { Plus, Upload } from "lucide-react";
+import { Send, Upload } from "lucide-react";
 import Image from "next/image";
 import { useRouter, useSearchParams } from "next/navigation";
 import React, { ChangeEvent, FormEvent, useState, useEffect } from "react";
@@ -377,7 +377,7 @@ const SuperAdminProductAddingPage = () => {
               className="w-full mt-8"
               disabled={isLoding}
             >
-              {isEditMode ? "Update" : "Create"}<Plus className="mt-1" />
+              {isEditMode ? "Update" : "Create"}<Send className="mt-1" />
 
             </Button>
 
