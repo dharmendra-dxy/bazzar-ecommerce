@@ -56,11 +56,13 @@ model FeatureBanner {
 }
 
 model Coupon {
-  id                String @id @default(cuid())
-  code              String @unique
+  id                String      @id   @default(cuid())
+  code              String      @unique
   discountPercent   Float
   startDate         DateTime
   endDate           DateTime
   usageLimit        Int
   usageCount        Int
+  createdAt         DateTime    @default(now())
+  updatedAt         DateTime    @updatedAt
 }
