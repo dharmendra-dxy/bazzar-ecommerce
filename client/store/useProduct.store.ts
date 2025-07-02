@@ -26,13 +26,13 @@ interface ProductState{
     fetchAllProductsForAdmin: () => Promise<void>,
     createProduct: (productData: FormData)=> Promise<Product>,
     updateProduct: (id:string, productData:FormData)=> Promise<void>,
-    deleteProduct: (id:string)=> Promise<void>,
+    deleteProduct: (id:string)=> Promise<boolean>,
     getProduct: (id:string) => Promise<Product | null>
 }
 
 export const useProductStore = create<ProductState>((set,get)=>({
     products: [],
-    isLoding: false,
+    isLoding: true,
     error: null,
 
     fetchAllProductsForAdmin: async() => {
@@ -41,8 +41,7 @@ export const useProductStore = create<ProductState>((set,get)=>({
             const response = await axios.get(`${API_ROUTES.PRODCUTS}/all`,{
                 withCredentials: true,
             });
-
-            set({products: response.data, isLoding:false});
+            set({products: response.data.products, isLoding:false});
         }
         catch(e){
             set({isLoding: false, error: 'Failed to fetch all products'});
@@ -90,8 +89,8 @@ export const useProductStore = create<ProductState>((set,get)=>({
             const response = await axios.delete(`${API_ROUTES.PRODCUTS}/${id}`, {
                 withCredentials: true,
             });
-
             set({isLoding:false});
+            return response.data?.success;
         }
         catch(e){
             set({isLoding: false, error: 'Failed to delete product'});
