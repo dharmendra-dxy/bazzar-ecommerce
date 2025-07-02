@@ -70,6 +70,22 @@ const SuperAdminProductAddingPage = () => {
     }
   }, [isEditMode, getProduct, editId]);
 
+  // clear form data:
+  useEffect(() => {
+    if (editId === null) {
+      setFormState({
+        name: '',
+        brand: '',
+        description: '',
+        category: '',
+        gender: '',
+        price: '',
+        stock: ','
+      })
+      setSelectedSizes([]);
+      setSelectedColors([]);
+    }
+  }, [isEditMode, editId])
 
 
   // handleInputChange
