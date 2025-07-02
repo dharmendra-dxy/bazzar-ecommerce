@@ -18,7 +18,7 @@ interface CouponStore {
     error: string | null,
     fetchCoupon: () => Promise<void>,
     createCoupon : (coupon: Omit<Coupon, 'id' | 'usageCount'>) => Promise<Coupon | null>,
-    deleteCoupon : (id:string) => Promise<Coupon | null>,
+    deleteCoupon : (id:string) => Promise<boolean>,
 }
 
 export const useCouponStore = create<CouponStore>((set,get)=>({
@@ -61,13 +61,12 @@ export const useCouponStore = create<CouponStore>((set,get)=>({
             const response = await axios.delete(`${API_ROUTES.COUPONS}/${id}`, {
                 withCredentials: true,
             });
-
             set({isLoading: false});
-            return response.data?.coupon;
+            return response.data?.success;
         }
         catch(err){
             set({isLoading: false, error:'Failed to create coupons'}); 
-            return null;  
+            return false;  
         }
 
     }

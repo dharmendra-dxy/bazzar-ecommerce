@@ -63,11 +63,13 @@ export const fetchAllCoupon = async (req: Request, res: Response): Promise<void>
 
 // deleteCoupon:
 export const deleteCoupon = async (req: Request, res: Response): Promise<void> => {
+    
     try{
         const {id} = req.params;
         const coupon = await prisma.coupon.delete({
             where: {id},
-        })
+        });
+
         res.status(200).json({
             success: true,
             message: "Coupons deleted succesfully",

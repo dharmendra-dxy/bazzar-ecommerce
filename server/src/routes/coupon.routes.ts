@@ -6,6 +6,6 @@ const router = express.Router();
 
 router.get('/all', authenicateJWT, isSuperAdmin,fetchAllCoupon);
 router.post('/new', authenicateJWT, isSuperAdmin, createCoupon);
-router.post('/:id', authenicateJWT, isSuperAdmin, deleteCoupon);
+router.delete('/:id', authenicateJWT, isSuperAdmin, deleteCoupon);
 
 export default router;
