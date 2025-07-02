@@ -53,7 +53,6 @@ export const useCouponStore = create<CouponStore>((set,get)=>({
             set({isLoading: false, error:'Failed to create coupons'}); 
             return null;  
         }
-
     },
 
     deleteCoupon: async(id: string) => {

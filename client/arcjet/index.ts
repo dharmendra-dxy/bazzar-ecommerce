@@ -51,4 +51,21 @@ export const createNewProductRules = arcjet({
   ],
 }); 
 
+export const createCouponsRules = arcjet({
+  key: process.env.ARCJET_KEY!,
+  rules: [
+    detectBot({
+      mode: 'LIVE',
+      allow: [],
+    }),
+    fixedWindow({
+      mode: "LIVE", 
+      window: "300s",
+      max: 5,
+    }),
+    shield({
+      mode: 'LIVE',
+    }),
+  ],
+}); 
 
