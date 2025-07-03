@@ -2,21 +2,16 @@
 
 import React, { ChangeEvent, useEffect, useRef, useState } from "react";
 import { ImageIcon, Send, Upload, X } from "lucide-react";
-import { useRouter } from "next/navigation";
 import { Label } from "@radix-ui/react-label";
 import { Input } from "@/components/ui/input";
 import { useSettingStore } from "@/store/useSetting.store";
 import { useProductStore } from "@/store/useProduct.store";
 import { Checkbox } from "@/components/ui/checkbox";
-import Image from "next/image";
 import LoadingScreen from "@/components/common/LoadingScreen";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 
-
 const SuperAdminSettingsPage = () => {
-
-  const router = useRouter();
 
   const [uploadedFiles, setUploadedFiles] = useState<File[]>([]);
   const [selectedProducts, setSelectedProducts] = useState<string[]>([]);
@@ -44,9 +39,6 @@ const SuperAdminSettingsPage = () => {
     }
   }, [fetchAllProductsForAdmin]);
 
-  console.log("products: ", products);
-  console.log("featuredBanners: ", featuredBanners);
-  console.log("featuredProducts: ", featuredProducts);
 
   // handleImageUpload:
   const handleImageUpload = (e: ChangeEvent<HTMLInputElement>) => {
@@ -59,24 +51,25 @@ const SuperAdminSettingsPage = () => {
 
   // handleRemoveSelectedImg:
   const handleRemoveSelectedImg = (idx: number) => {
-    setUploadedFiles(prev => prev.filter((_, index) => index!==idx));
+    setUploadedFiles(prev => prev.filter((_, index) => index !== idx));
   }
 
   // handleFeaturedProductSelect:
   const handleFeaturedProductSelect = (productId: string) => {
     setSelectedProducts((prev) => {
-      if(prev.includes(productId)){
-        return prev.filter(id => id!== productId);
+      if (prev.includes(productId)) {
+        return prev.filter(id => id !== productId);
       }
 
-      if(prev.length>8){
+      if (prev.length > 8) {
         toast.error("You can only select upto 8 featured products.");
         return prev;
       }
       return [...prev, productId];
     })
-
   }
+
+  console.log("selectedProducts: ", selectedProducts);
 
   // handleSaveChanges:
   const handleSaveChanges = async () => {
@@ -90,16 +83,28 @@ const SuperAdminSettingsPage = () => {
         setUploadedFiles([]);
       }
       else {
-        toast.success("Error while adding Featured banner");
+        toast.error("Error while adding Featured banner");
       }
     }
 
     // for featured products:
-    const result = await updateFeaturedProducts(selectedProducts);
-    if(result){
-      fetchFeaturedProducts();
+    if (selectedProducts.length > 0) {
+      const result = await updateFeaturedProducts(selectedProducts);
+      if (result) {
+        toast.success("Featured Products updated Succesfully");
+        fetchFeaturedProducts();
+      }
+      else {
+        toast.error("Error while adding Featured product");
+      }
     }
+
   }
+
+  // to show in ui wether a product is featured or not:
+  useEffect(() => {
+    setSelectedProducts(featuredProducts.map(product => product.id));
+  }, [featuredProducts])
 
   return (
     <div className="p-6 space-y-6">
@@ -146,19 +151,19 @@ const SuperAdminSettingsPage = () => {
                 <div className="my-4 grid lg:grid-cols-4 gap-4">
                   {
                     uploadedFiles.map((file, index) => (
-                      <div key={index+1} className="relative group">
+                      <div key={index + 1} className="relative group">
                         <img
                           src={URL.createObjectURL(file)}
-                          alt={`uploaded-image-${index+1}`}
+                          alt={`uploaded-image-${index + 1}`}
                           className="w-full h-32 object-contain rounded-md"
                         />
-                        <Button 
-                          variant='destructive' 
-                          size='icon' 
+                        <Button
+                          variant='destructive'
+                          size='icon'
                           className="absolute top-2 right-2 hidden group-hover:flex"
-                          onClick={()=>handleRemoveSelectedImg(index)}
+                          onClick={() => handleRemoveSelectedImg(index)}
                         >
-                          <X className="size-4"/>
+                          <X className="size-4" />
                         </Button>
                       </div>
                     ))
@@ -196,12 +201,16 @@ const SuperAdminSettingsPage = () => {
             <div className="grid grid-cols-1 md:grid-cols-3 lg:gird-cols-4 gap-4 mt-6">
               {
                 products.map(product => (
-                  <div 
-                    key={product.id} 
-                    className="relative"
+                  <div
+                    key={product.id}
+                    className={`relative p-2 shadow-md rounded-lg border ${selectedProducts.includes(product.id) ? " border-blue-500 bg-blue-100" : "bg-gray-100/50"}`}
                   >
                     <div className="absolute top-2 right-2">
-                      <Checkbox checked={true} />
+                      <Checkbox
+                        checked={selectedProducts.includes(product.id)}
+                        onCheckedChange={() => handleFeaturedProductSelect(product.id)}
+                        className="bg-black"
+                      />
                     </div>
                     <div className="space-y-2">
                       <div className="w-full h-32 bg-gray-100 rounded-md flex items-center justify-center">
@@ -249,8 +258,6 @@ const SuperAdminSettingsPage = () => {
           </div>
 
         </div>
-
-
       </div>
 
     </div>

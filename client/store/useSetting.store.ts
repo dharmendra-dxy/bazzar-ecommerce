@@ -90,7 +90,7 @@ export const useSettingStore = create<SettingState>((set,get) =>({
         set({isLoading: true, error: null});
         try{
 
-            const response = await axios.post(`${API_ROUTES.SETTINGS}/update-products`,{productIds}, {
+            const response = await axios.put(`${API_ROUTES.SETTINGS}/update-products`,{productIds}, {
                 withCredentials: true,
             });
 
