@@ -4,4 +4,5 @@ export const API_ROUTES= {
     AUTH: `${API_BASE_URL}/api/auth`,
     PRODCUTS: `${API_BASE_URL}/api/products`,
     COUPONS: `${API_BASE_URL}/api/coupons`,
+    SETTINGS: `${API_BASE_URL}/api/settings`,
 }
