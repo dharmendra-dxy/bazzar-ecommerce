@@ -6,7 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
-import { brands, categories, colors, sizes, } from "@/constant/super-admin/addProducts";
+import { brands, categories, colors, sizes, } from "@/constant/super-admin/products";
 import { useProductStore } from "@/store/useProduct.store";
 import { Send, Upload } from "lucide-react";
 import Image from "next/image";
