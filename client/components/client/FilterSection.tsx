@@ -7,7 +7,26 @@ import { Label } from "../ui/label";
 import { Slider } from "../ui/slider";
 import { Button } from "../ui/button";
 
-const FilterSection = () => {
+
+interface FilterSectionProps {
+    handleToggleFilter: (filterType: 'categories' | 'sizes' | 'brands' | 'colors', value: string) => void,
+    selectedCategories: string[],
+    selectedSizes: string[],
+    selectedColors: string[],
+    selectedBrands: string[],
+    priceRange: number[],
+    setPriceRange: any,
+}
+
+const FilterSection: React.FC<FilterSectionProps> = ({
+    handleToggleFilter,
+    selectedCategories,
+    selectedSizes,
+    selectedColors,
+    selectedBrands,
+    priceRange,
+    setPriceRange
+}) => {
     return (
         <div className=" space-y-6">
             <div>
@@ -16,16 +35,18 @@ const FilterSection = () => {
                     <h3 className="mb-3 font-semibold">Categories</h3>
                     <div className="space-y-2">
                         {
-                            categories.map((categorie) => (
+                            categories.map((category) => (
                                 <div
-                                    key={categorie}
+                                    key={category}
                                     className="flex items-center"
                                 >
                                     <Checkbox
-                                        id={categorie}
+                                        id={category}
+                                        checked={selectedCategories.includes(category)}
+                                        onCheckedChange={() => handleToggleFilter('categories', category)}
                                     />
-                                    <Label htmlFor={categorie} className="ml-2 text-xs cursor-pointer">
-                                        {categorie}
+                                    <Label htmlFor={category} className="ml-2 text-xs cursor-pointer">
+                                        {category}
                                     </Label>
 
                                 </div>
@@ -47,6 +68,8 @@ const FilterSection = () => {
                                 >
                                     <Checkbox
                                         id={brand}
+                                        checked={selectedBrands.includes(brand)}
+                                        onCheckedChange={() => handleToggleFilter('brands', brand)}
                                     />
                                     <Label htmlFor={brand} className="ml-2 text-xs cursor-pointer">
                                         {brand}
@@ -66,7 +89,12 @@ const FilterSection = () => {
                     <div className="flex flex-wrap gap-2">
                         {
                             sizes.map((size) => (
-                                <Button key={size} variant={'outline'} size={'sm'}>
+                                <Button
+                                    key={size}
+                                    size={'sm'}
+                                    variant={selectedSizes.includes(size) ? 'default' : 'outline'}
+                                    onClick={() => handleToggleFilter('sizes', size)}
+                                >
                                     {size}
                                 </Button>
                             ))
@@ -83,8 +111,9 @@ const FilterSection = () => {
                             colors.map((color) => (
                                 <button
                                     key={color?.name}
-                                    className={`w-6 h-6 rounded-full ${color?.class}`}
+                                    className={`w-6 h-6 rounded-full cursor-pointer ${color?.class} ${selectedColors.includes(color?.name) ? "ring-offset-2 ring-black ring-2" : ""}`}
                                     title={color?.name}
+                                    onClick={() => handleToggleFilter('colors', color?.name)}
                                 />
                             ))
                         }
@@ -100,11 +129,13 @@ const FilterSection = () => {
                         max={100000}
                         step={1}
                         className="w-full"
+                        value={priceRange}
+                        onValueChange={(value) => setPriceRange(value)}
                     />
 
                     <div className="flex justify-between mt-2 text-sm">
-                        <span>Rs. 100</span>
-                        <span>Rs. 2000</span>
+                        <span>Rs. {priceRange[0]}</span>
+                        <span>Rs. {priceRange[1]}</span>
                     </div>
                 </div>
 
