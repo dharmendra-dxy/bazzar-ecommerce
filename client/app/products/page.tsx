@@ -5,12 +5,13 @@ import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
-import { ListFilter, MoveRight } from "lucide-react";
+import { ChevronLeft, ChevronRight, ListFilter } from "lucide-react";
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useProductStore } from "@/store/useProduct.store";
 import LoadingScreen from "@/components/common/LoadingScreen";
 import ProductCard from "@/components/client/ProductCard";
+import Pagination from "@/components/common/Pagination";
 
 const ProductsPage = () => {
 
@@ -40,7 +41,7 @@ const ProductsPage = () => {
   const fetchProducts = () => {
     fetchFilteredProducts({
       page: currentPage,
-      limit: 2,
+      limit: 3,
       categories: selectedCategories,
       sizes: selectedSizes,
       colors: selectedColors,
@@ -55,9 +56,6 @@ const ProductsPage = () => {
   useEffect(() => {
     fetchProducts();
   }, [currentPage, selectedCategories, selectedSizes, selectedBrands, selectedBrands, selectedColors, priceRange, sortBy, sortOrder]);
-
-  console.log("products:", products);
-
 
   const handleSortChange = (value: string) => {
     const [newSortBy, newSortOrder] = value.split('-');
@@ -75,6 +73,7 @@ const ProductsPage = () => {
 
     setterMap[filterType]((prev) => prev.includes(value) ? prev.filter(item => item !== value) : [...prev, value]);
   }
+
 
   return (
     <div className="min-h-screen bg-white">
@@ -97,7 +96,7 @@ const ProductsPage = () => {
       <div className="container mx-auto px-4 py-8">
         <div className="flex items-center justify-between mb-8">
           <h2 className="text-2xl font-semibold">
-            All Products
+            All Products<span className="text-gray-600">({totalCount})</span>
           </h2>
 
 
@@ -179,21 +178,25 @@ const ProductsPage = () => {
                 <ProductCard
                   products={products}
                 />
-              ): (
+              ) : (
                 <div className="text-sm text-gray-400 font-semibold text-center">
                   No Products Found.
                 </div>
               )
             }
           </div>
-
-          {/* Pagination: */}
-          
-
         </div>
 
+        {/* Pagination: */}
+        <Pagination
+          currentPage={currentPage} 
+          totalPages={totalPages}
+          setCurrentPage={setCurrentPage}
+        />
 
       </div>
+
+
 
     </div>
   );

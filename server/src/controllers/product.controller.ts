@@ -210,8 +210,8 @@ export const deleteProduct = async (req: AuthenticatedRequest, res:Response): Pr
 export const getFilteredProducts = async (req: AuthenticatedRequest, res:Response): Promise<void> => {
 
     try{
-        const page = parseInt(req.query.page as string) | 1;
-        const limit = parseInt(req.query.limit as string) | 10;
+        const page = parseInt(req.query.page as string) || 1;
+        const limit = parseInt(req.query.limit as string) || 10;
 
         const categories = ((req.query.categories as string)|| '').split(",").filter(Boolean);
         const brands = ((req.query.brands as string)|| '').split(",").filter(Boolean);
