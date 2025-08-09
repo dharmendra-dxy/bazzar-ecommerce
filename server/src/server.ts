@@ -34,7 +34,7 @@ app.use('/api/auth', authRoutes);
 app.use('/api/products', productRoutes);
 app.use('/api/coupons', couponRoutes);
 app.use('/api/settings', settingRoutes);
-app.use('/api/cart', cartRoutes);
+app.use('/api/carts', cartRoutes);
 app.get('/', (req,res) =>{ 
     res.json({ message:"Hello from bazaar"});
 })
