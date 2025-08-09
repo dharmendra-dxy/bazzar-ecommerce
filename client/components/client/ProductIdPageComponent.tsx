@@ -6,12 +6,14 @@ import React, { useEffect, useState } from "react";
 import LoadingScreen from "../common/LoadingScreen";
 import { Button } from "../ui/button";
 import { ShoppingBag } from "lucide-react";
+import { Tabs, TabsList, TabsTrigger } from "../ui/tabs";
+import { TabsContent } from "@radix-ui/react-tabs";
+import ProductIdSkeleton from "./ProductIdSkeleton";
 
 const ProductIdPageComponent = ({ id }: { id: string }) => {
 
     const { getProduct, isLoding, error } = useProductStore();
     const router = useRouter();
-
 
     const [product, setProduct] = useState<any>(null);
 
@@ -27,7 +29,7 @@ const ProductIdPageComponent = ({ id }: { id: string }) => {
 
     console.log("product: ", product);
 
-    if (isLoding) return <LoadingScreen />
+    if (isLoding) return <ProductIdSkeleton/>
 
     if (!product) return <div className="text-gray-600 font-semibold text-center mt-24">No Product Found</div>
 
@@ -139,10 +141,27 @@ const ProductIdPageComponent = ({ id }: { id: string }) => {
                     </div>
 
                 </div>
-                <div>
+                <div className="mt-16">
+                    <Tabs defaultValue="details">
+                        <TabsList className="w-full justify-start border-b mb-6">
+                            <TabsTrigger value="details">Product Description</TabsTrigger>
+                            <TabsTrigger value="reviews">Product Reviews</TabsTrigger>
+                            <TabsTrigger value="shipping">Shipping & Returns</TabsTrigger>
+                        </TabsList>
+                        <TabsContent value="details">
+                            <p className="text-gray-700 mb-4">
+                                {product.description}
+                            </p>
+                        </TabsContent>
+                        <TabsContent value="reviews">2</TabsContent>
+                        <TabsContent value="shipping">
+                            <p className="text-gray-700 mb-4">
+                                Shipping and returns information goes here. Please read the info before making any purchases.
+                            </p>
+                        </TabsContent>
+                    </Tabs>
 
                 </div>
-
             </div>
 
         </div>
