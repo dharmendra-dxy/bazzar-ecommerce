@@ -8,6 +8,7 @@ import authRoutes from './routes/auth.routes';
 import productRoutes from './routes/product.routes';
 import couponRoutes from './routes/coupon.routes';
 import settingRoutes from './routes/setting.routes';
+import cartRoutes from './routes/cart.routes';
 
 dotenv.config();
 const app = express();
@@ -33,6 +34,7 @@ app.use('/api/auth', authRoutes);
 app.use('/api/products', productRoutes);
 app.use('/api/coupons', couponRoutes);
 app.use('/api/settings', settingRoutes);
+app.use('/api/cart', cartRoutes);
 app.get('/', (req,res) =>{ 
     res.json({ message:"Hello from bazaar"});
 })
