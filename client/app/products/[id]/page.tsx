@@ -1,9 +1,14 @@
-'use client';
+import ProductIdPageComponent from "@/components/client/ProductIdPageComponent";
+import ProductIdSkeleton from "@/components/client/ProductIdSkeleton";
+import React, { Suspense } from "react";
 
-import React from "react";
+const ProductIdPage = ({params}: {params: {id: string}}) => {
 
-const ProductIdPage = () => {
-  return <div>ProductIdPage</div>;
+  return (
+    <Suspense fallback={<ProductIdSkeleton/>}>
+      <ProductIdPageComponent id={params.id}/>
+    </Suspense>
+  );
 };
 
 export default ProductIdPage;

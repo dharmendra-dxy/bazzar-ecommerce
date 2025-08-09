@@ -5,9 +5,8 @@ import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
-import { ChevronLeft, ChevronRight, ListFilter } from "lucide-react";
+import { ListFilter } from "lucide-react";
 import React, { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
 import { useProductStore } from "@/store/useProduct.store";
 import LoadingScreen from "@/components/common/LoadingScreen";
 import ProductCard from "@/components/client/ProductCard";
@@ -23,8 +22,6 @@ const ProductsPage = () => {
   const [selectedBrands, setSelectedBrands] = useState<string[]>([]);
   const [sortBy, setSortBy] = useState('createdAt');
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc');
-
-  const router = useRouter();
 
   const {
     products,
