@@ -1,10 +1,10 @@
 'use client';
 
+import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import {
   Table,
   TableBody,
-  TableCaption,
   TableCell,
   TableFooter,
   TableHead,
@@ -12,6 +12,7 @@ import {
   TableRow,
 } from "@/components/ui/table"
 import { useCartStore } from "@/store/useCart.store";
+import { Minus, Plus, Trash2 } from "lucide-react";
 import Image from "next/image";
 import React, { useEffect } from "react";
 
@@ -31,6 +32,7 @@ const CartPage = () => {
         Your Cart ({items.length})
       </h1>
 
+      {/* Display Table here: */}
       <Card className="w-full overflow-x-auto mt-10 p-4">
         <Table>
           <TableHeader>
@@ -41,6 +43,7 @@ const CartPage = () => {
               <TableHead>Size</TableHead>
               <TableHead>Quantity</TableHead>
               <TableHead>Price</TableHead>
+              <TableHead>Total Price</TableHead>
               <TableHead className="text-right">Action</TableHead>
             </TableRow>
           </TableHeader>
@@ -59,9 +62,18 @@ const CartPage = () => {
                 </TableCell>
                 <TableCell>{item?.color}</TableCell>
                 <TableCell>{item?.sizes}</TableCell>
-                <TableCell>{item?.quantity}</TableCell>
-                <TableCell>{item?.price}</TableCell>
-                <TableCell className="text-right">Delete</TableCell>
+                <TableCell className="flex items-center gap-2">
+                  <Button variant='outline' size='icon'><Minus size={12}/></Button>
+                  <Button variant='default' size='icon'>{item?.quantity}</Button>
+                  <Button variant='outline' size='icon'><Plus size={12}/></Button>
+                </TableCell>
+                <TableCell className="font-semibold">Rs. {item?.price}</TableCell>
+                <TableCell className="font-semibold">Rs. {(Number(item?.price) * Number(item?.quantity)).toFixed(2)}</TableCell>
+                <TableCell className="text-right">
+                  <Button variant={'default'}>
+                    <Trash2 size={12}/> Remove
+                  </Button>
+                </TableCell>
               </TableRow>
             ))}
           </TableBody>
@@ -73,6 +85,8 @@ const CartPage = () => {
           </TableFooter>
         </Table>
       </Card>
+
+      
 
     </div>
   );
