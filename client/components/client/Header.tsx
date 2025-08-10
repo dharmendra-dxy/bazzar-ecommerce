@@ -1,7 +1,7 @@
 'use client';
 
 import Link from "next/link";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { headerNavItems } from "@/constant/client/constant";
 import { useRouter } from "next/navigation";
 import { Menu, MoveLeft, ShoppingCart, User } from "lucide-react";
@@ -10,11 +10,13 @@ import { Button } from "../ui/button";
 import { DropdownMenuItem } from "@radix-ui/react-dropdown-menu";
 import { useAuthStore } from "@/store/useAuth.store";
 import { Sheet, SheetContent, SheetHeader } from "../ui/sheet";
+import { useCartStore } from "@/store/useCart.store";
 
 const Header = () => {
 
     const router = useRouter();
     const { logout } = useAuthStore();
+    const { fetchCart, items } = useCartStore();
 
     const [mobileView, setMobileView] = useState<"menu" | "account">("menu");
     const [showSheet, setShowSheet] = useState<boolean>(false);
@@ -24,6 +26,10 @@ const Header = () => {
         await logout();
         router.push('/auth/login');
     }
+
+    useEffect(() => {
+        fetchCart();
+    }, [fetchCart]);
 
     const renderMobileHeader = () => {
         switch (mobileView) {
@@ -102,7 +108,7 @@ const Header = () => {
                                 }}
                             >
                                 <ShoppingCart className="mr-3 h-4 w-4" />
-                                Cart (2)
+                                Cart ({items.length})
                             </Button>
                         </div>
 
@@ -150,7 +156,7 @@ const Header = () => {
                         >
                             <ShoppingCart className="h-6 w-6" />
                             <span className="absolute -top-1 -right-1 h-4 w-4 text-white bg-black text-xs rounded-full flex items-center justify-center">
-                                1
+                                {items.length}
                             </span>
                         </button>
 

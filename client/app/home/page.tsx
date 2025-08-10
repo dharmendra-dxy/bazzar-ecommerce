@@ -6,7 +6,7 @@ import React, { useEffect, useState } from "react";
 
 const HomePage = () => {
 
-  const { banners, products, fetchFeaturedBanners, fetchFeaturedProducts, isLoading } = useSettingStore();
+  const { banners, products, fetchFeaturedBanners, fetchFeaturedProducts } = useSettingStore();
 
   const [currentSlide, setCurrentSlide] = useState(0);
 

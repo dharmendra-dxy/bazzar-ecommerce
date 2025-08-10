@@ -9,25 +9,58 @@ import { ShoppingBag } from "lucide-react";
 import { Tabs, TabsList, TabsTrigger } from "../ui/tabs";
 import { TabsContent } from "@radix-ui/react-tabs";
 import ProductIdSkeleton from "./ProductIdSkeleton";
+import { useCartStore } from "@/store/useCart.store";
+import { toast } from "sonner";
 
 const ProductIdPageComponent = ({ id }: { id: string }) => {
 
-    const { getProduct, isLoding, error } = useProductStore();
+    const { getProduct, isLoding } = useProductStore();
+    const {addToCart, isLoading: addToCartLoading} = useCartStore();
     const router = useRouter();
 
     const [product, setProduct] = useState<any>(null);
 
+    const [selectedImg,setSelectedImg ] = useState<string | null>(null);
+    const [selectedColor,setSelectedColor] = useState<number|null>(null);
+    const [selectedSize,setSelectedSize] = useState<string|null>(null);
+    const [quantity,setQuantity] = useState<number>(1);
+
     useEffect(() => {
         const fetchProductById = async () => {
             const response = await getProduct(id);
-            if (response) setProduct(response);
+            if (response){
+                setProduct(response);
+                setSelectedImg(response.images[0]);
+            }
             else router.push('/404');
         }
 
         fetchProductById();
-    }, [id, getProduct, router])
+    }, [id, getProduct, router]);
 
-    console.log("product: ", product);
+    // handleAddToCart:
+    const handleAddToCart = async () => {
+        if(product){
+            const result = await addToCart({
+                productId: product?.id,
+                name: product?.name,
+                price: product?.price,
+                image: product?.images[0],
+                color: product?.colors[selectedColor as number] ?? "white",
+                size: selectedSize as string,
+                quantity: quantity,
+            });
+            if(result) toast.success('Product is added to the cart');
+            else toast.error("Some error occurred | Select all the fields");
+
+            // clear states:
+            setSelectedColor(null);
+            setSelectedSize(null);
+            setQuantity(1);
+        }
+
+    }
+
 
     if (isLoding) return <ProductIdSkeleton/>
 
@@ -45,7 +78,8 @@ const ProductIdPageComponent = ({ id }: { id: string }) => {
                                 product?.images?.map((image: string, index: number) => (
                                     <button
                                         key={index}
-                                        className="border-2"
+                                        className={` border-2 cursor-pointer ${selectedImg===image ? "border-gray-700" : "border-gray-300"}`}
+                                        onClick={()=> setSelectedImg(image)}
                                     >
                                         <img
                                             src={image}
@@ -61,7 +95,7 @@ const ProductIdPageComponent = ({ id }: { id: string }) => {
                         {/* Display large image */}
                         <div className="flex-1 relative w-[200px]">
                             <img
-                                src={product.images[0]}
+                                src={selectedImg ?? product.images[0]}
                                 alt={product.name}
                                 className="w-full h-fit object-cover"
                             />
@@ -89,8 +123,10 @@ const ProductIdPageComponent = ({ id }: { id: string }) => {
                                     product?.colors.map((color: string, index: number) => (
                                         <button
                                             key={index}
-                                            className="h-6 w-6 rounded-full border-2"
+                                            className={`h-6 w-6 rounded-full border-2 ${selectedColor===index ? "border-gray-700": "border-gray-300"
+                                            }`}
                                             style={{ backgroundColor: color }}
+                                            onClick={()=> setSelectedColor(index)}
                                         />
                                     ))
                                 }
@@ -107,9 +143,9 @@ const ProductIdPageComponent = ({ id }: { id: string }) => {
                                             size!=="" &&
                                             <Button
                                                 key={index}
-                                                variant={'default'}
+                                                variant={selectedSize===size ? "default" : "outline"}
                                                 size={'icon'}
-                                                className=""
+                                                onClick={()=> setSelectedSize(size)}
                                             >
                                                 {size}
                                             </Button>
@@ -125,15 +161,23 @@ const ProductIdPageComponent = ({ id }: { id: string }) => {
                                 Quantity
                             </h3>
                             <div className="flex gap-2">
-                                <Button variant='outline' size='icon'>-</Button>
-                                <Button variant='default' size='icon'>1</Button>
-                                <Button variant='outline' size='icon'>+</Button>
+                                <Button variant='outline' size='icon' onClick={()=>setQuantity((prev) => prev>1 ? prev-1 : 1)}>-</Button>
+                                <Button variant='default' size='icon'>{quantity}</Button>
+                                <Button variant='outline' size='icon' onClick={()=>setQuantity((prev) => prev+1)}>+</Button>
                             </div>
                         </div>
 
                         <div>
-                            <Button variant='default' className="w-full">
-                                Add To Cart <ShoppingBag />
+                            <Button 
+                            variant='default' 
+                            className="w-full" 
+                            onClick={handleAddToCart}
+                            disabled={addToCartLoading}
+                            >
+                                {
+                                    addToCartLoading ? "Adding..." :" Add To Cart" 
+                                }
+                                <ShoppingBag />
                             </Button>
 
                         </div>

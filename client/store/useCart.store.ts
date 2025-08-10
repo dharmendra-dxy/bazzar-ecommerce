@@ -12,7 +12,7 @@ export interface CartItem {
     image: string,
     color: string,
     size: string,
-    quantity: string,
+    quantity: number,
 }
 
 interface cartStore {
@@ -20,7 +20,7 @@ interface cartStore {
     isLoading: boolean,
     error: string | null,
     fetchCart: () => Promise<void>,
-    addToCart: (item: Omit<CartItem, 'id'>) => Promise<void>,
+    addToCart: (item: Omit<CartItem, 'id'>) => Promise<boolean | void>,
     removeFromCart: (id: string)=> Promise<void>
     updateCartQuantity: (id: string, quantity:number)=> Promise<void>
     clearCart: ()=> Promise<void>
@@ -72,10 +72,12 @@ export const useCartStore = create<cartStore>((set, get) => {
                     items: [...state.items, response.data.data],
                     isLoading:false,
                 }))
+                return true;
 
             }
             catch(err){
-                set({isLoading: false, error:'Failed to add to cart'});   
+                set({isLoading: false, error:'Failed to add to cart'});
+                return false;   
             }
         },
         removeFromCart: async (id:string) => {
