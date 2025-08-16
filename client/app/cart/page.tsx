@@ -1,5 +1,6 @@
 'use client';
 
+import LoadingScreen from "@/components/common/LoadingScreen";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import {
@@ -11,20 +12,38 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
+import { useAuthStore } from "@/store/useAuth.store";
 import { useCartStore } from "@/store/useCart.store";
-import { Minus, Plus, Trash2 } from "lucide-react";
+import { Minus, MoveRight, Plus, Trash2 } from "lucide-react";
 import Image from "next/image";
-import React, { useEffect } from "react";
+import { useRouter } from "next/navigation";
+import React, { useEffect, useState } from "react";
 
 const CartPage = () => {
 
-  const { fetchCart, items } = useCartStore();
+  const router = useRouter();
+  const { user } = useAuthStore();
+  const { fetchCart, items, isLoading, updateCartQuantity, removeFromCart } = useCartStore();
+  const [isUpdating, setIsUpdating] = useState(false);
 
   useEffect(() => {
     fetchCart();
   }, [fetchCart]);
 
-  console.log("items: ", items);
+  const totalPrice = items.reduce((sum, item) => sum + Number(item.price) * item.quantity, 0);
+
+  const handleUpdateQuantity = async (id: string, newQnt: number) => {
+    newQnt = Math.max(1, newQnt); // to make sure it min value in 1.
+    setIsUpdating(true);
+    await updateCartQuantity(id, newQnt);
+    setIsUpdating(false);
+  }
+
+  const handleRemoveItem = async (id: string) => {
+    await removeFromCart(id);
+  }
+
+  if (isLoading) return <LoadingScreen />
 
   return (
     <div className="min-h-screen container mx-auto p-8">
@@ -44,7 +63,7 @@ const CartPage = () => {
               <TableHead>Quantity</TableHead>
               <TableHead>Price</TableHead>
               <TableHead>Total Price</TableHead>
-              <TableHead className="text-right">Action</TableHead>
+              <TableHead>Action</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -63,15 +82,37 @@ const CartPage = () => {
                 <TableCell>{item?.color}</TableCell>
                 <TableCell>{item?.sizes}</TableCell>
                 <TableCell className="flex items-center gap-2">
-                  <Button variant='outline' size='icon'><Minus size={12}/></Button>
-                  <Button variant='default' size='icon'>{item?.quantity}</Button>
-                  <Button variant='outline' size='icon'><Plus size={12}/></Button>
+                  <Button
+                    variant='outline'
+                    size='icon'
+                    onClick={() => handleUpdateQuantity(item.id, item.quantity - 1)}
+                    disabled={isUpdating}
+                  >
+                    <Minus size={12} />
+                  </Button>
+                  <Button
+                    variant='default'
+                    size='icon'
+                  >
+                    {item?.quantity}
+                  </Button>
+                  <Button
+                    variant='outline'
+                    size='icon'
+                    onClick={() => handleUpdateQuantity(item.id, item.quantity + 1)}
+                    disabled={isUpdating}
+                  >
+                    <Plus size={12} />
+                  </Button>
                 </TableCell>
                 <TableCell className="font-semibold">Rs. {item?.price}</TableCell>
                 <TableCell className="font-semibold">Rs. {(Number(item?.price) * Number(item?.quantity)).toFixed(2)}</TableCell>
-                <TableCell className="text-right">
-                  <Button variant={'default'}>
-                    <Trash2 size={12}/> Remove
+                <TableCell>
+                  <Button
+                    variant={'default'}
+                    onClick={() => handleRemoveItem(item.id)}
+                  >
+                    <Trash2 size={12} /> Remove
                   </Button>
                 </TableCell>
               </TableRow>
@@ -80,13 +121,28 @@ const CartPage = () => {
           <TableFooter>
             <TableRow>
               <TableCell colSpan={3}>Total</TableCell>
-              <TableCell className="text-right">$2,500.00</TableCell>
+              <TableCell className="text-right">R.S. {totalPrice}</TableCell>
             </TableRow>
           </TableFooter>
         </Table>
       </Card>
 
-      
+      <div className="flex flex-col md:flex-row gap-6 mt-8 text-center justify-center">
+        <Button
+          variant='outline'
+          onClick={() => router.push('/checkout')}
+        >
+          Procced to Checkout <MoveRight />
+        </Button>
+        <Button
+          variant='outline'
+          onClick={() => router.push('/products')}
+        >
+          Continue Shopping <MoveRight />
+        </Button>
+
+      </div>
+
 
     </div>
   );
