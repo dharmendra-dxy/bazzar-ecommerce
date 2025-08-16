@@ -14,15 +14,16 @@ datasource db {
 }
 
 model User {
-  id           String   @id @default(cuid())
+  id           String    @id @default(cuid())
   name         String?
-  email        String   @unique
+  email        String    @unique
   password     String
-  role         Role     @default(USER)
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @default(now())
-  refreshToken String?  @unique
+  role         Role      @default(USER)
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @default(now())
+  refreshToken String?   @unique
   cart         Cart?
+  Address      Address[]
 }
 
 enum Role {
@@ -50,15 +51,15 @@ model Product {
 }
 
 model CartItem {
-  id        String  @id @default(cuid())
+  id        String   @id @default(cuid())
   cartId    String
-  cart      Cart    @relation(fields: [cartId], references: [id])
+  cart      Cart     @relation(fields: [cartId], references: [id])
   productId String
   quantity  Int
   size      String?
   color     String?
-  createdAt DateTime   @default(now())
-  updatedAt DateTime   @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   @@unique([cartId, productId, size, color])
 }
@@ -89,4 +90,19 @@ model Coupon {
   usageCount      Int
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
+}
+
+model Address {
+  id         String   @id @default(cuid())
+  userId     String
+  user       User     @relation(fields: [userId], references: [id])
+  name       String
+  address    String
+  city       String
+  country    String
+  postalCode String
+  phone      String
+  isDefault  Boolean  @default(false)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
 }
