@@ -5,7 +5,7 @@ import { createAddress, deleteAddress, getAddresses, updateAddress } from "../co
 const router = express.Router();
 
 router.use(authenicateJWT);
-router.get('/get-all-address',getAddresses); 
+router.get('/fetch-all-address',getAddresses); 
 router.post('/add-address',createAddress); 
 router.put('/update-address/:id',updateAddress);
 router.delete('/delete-address/:id',deleteAddress);
