@@ -4,7 +4,6 @@ import { create } from "zustand";
 
 export interface Address{
     id: string,
-    userId: string,
     name: string,
     address: string, 
     city: string, 
@@ -18,10 +17,10 @@ interface addressStore {
     addresses : Address[],
     isLoading: boolean,
     error: string | null,
-    fetchAllAddresses?: () => Promise<boolean>,
-    createAddress?: (address: Omit<Address, 'id'>) => Promise<Address | null>,
-    updateAddress?: (id: string, address:Partial<Address>)=> Promise<Address | null>
-    deleteAddress?: (id: string)=> Promise<boolean>
+    fetchAllAddresses: () => Promise<boolean>,
+    createAddress: (address: Omit<Address, 'id'>) => Promise<Address | null>,
+    updateAddress: (id: string, address:Partial<Address>)=> Promise<Address | null>
+    deleteAddress: (id: string)=> Promise<boolean>
 }
 
 export const useAddressStore = create<addressStore>((set, get) => ({
@@ -35,8 +34,8 @@ export const useAddressStore = create<addressStore>((set, get) => ({
                 withCredentials: true,
             });
 
-                set({isLoading: false, addresses: response?.data?.result});
-                return true;
+            set({isLoading: false, addresses: response?.data?.result});
+            return true;
         }
         catch (err) {
             set({isLoading: false, error:'Failed to fetch all address'});
@@ -46,7 +45,7 @@ export const useAddressStore = create<addressStore>((set, get) => ({
     createAddress: async (address) => {
         set({isLoading: true, error: null});
         try {
-            const response = await axios.post(`${API_ROUTES.ADDRESS}/create-address`, address,{
+            const response = await axios.post(`${API_ROUTES.ADDRESS}/add-address`, address,{
                 withCredentials: true,
             });
 
