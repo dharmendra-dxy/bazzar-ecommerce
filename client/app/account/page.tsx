@@ -10,7 +10,7 @@ import { TabsTrigger } from "@radix-ui/react-tabs";
 import { LoaderIcon } from "lucide-react";
 import React, { useEffect, useState } from "react";
 
-interface AddressFormState {
+export interface AddressFormState {
   name: string;
   address: string;
   city: string;
@@ -79,7 +79,7 @@ const AccountPage = () => {
                   </Button>
                 </div>
                 {
-                  editAddress || addressLoading ? (
+                  addressLoading ? (
                     <div className="flex items-center justify-between">
                       <div className="animate-spin">
                         <LoaderIcon />
@@ -94,6 +94,10 @@ const AccountPage = () => {
                     /> : (
                       <AddressList
                         addresses={addresses}
+                        formData={formData}
+                        setFormData={setFormData}
+                        setEditAddress={setEditAddress}
+                        setShowAddress={setShowAddress}
                       />
                     )
                 }

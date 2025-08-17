@@ -6,16 +6,7 @@ import { Button } from "../ui/button";
 import { Send } from "lucide-react";
 import { useAddressStore } from "@/store/useAddress";
 import { toast } from "sonner";
-
-interface AddressFormState {
-    name: string;
-    address: string;
-    city: string;
-    country: string;
-    postalCode: string;
-    phone: string;
-    isDefault: boolean;
-}
+import { AddressFormState } from "@/app/account/page";
 
 interface AddressFromProps {
     formData: AddressFormState,
@@ -44,6 +35,7 @@ const AddressFrom = ({
                 const response = await updateAddress(editAddress, formData);
                 if (response) {
                     setEditAddress(null);
+                    setShowAddress(false);
                     toast.success("Address updated succesfully");
                     fetchAllAddresses();
                 }
