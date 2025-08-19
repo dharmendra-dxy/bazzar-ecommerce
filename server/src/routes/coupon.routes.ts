@@ -4,7 +4,7 @@ import { authenicateJWT, isSuperAdmin } from "../middlewares/auth.middleware";
 
 const router = express.Router();
 
-router.get('/all', authenicateJWT, isSuperAdmin,fetchAllCoupon);
+router.get('/all', authenicateJWT,fetchAllCoupon);
 router.post('/new', authenicateJWT, isSuperAdmin, createCoupon);
 router.delete('/:id', authenicateJWT, isSuperAdmin, deleteCoupon);
 

@@ -7,7 +7,7 @@ import CheckoutSuspense from "./CheckoutSuspense";
 const CheckoutPage = () => {
 
   const options = {
-    clientId: "",
+    clientId: "AQaYsqF8B8lshzGPo2bBFWMhOZROWuqp30ImB5gsrzWWNFELcc9UM3ontPZME-Rh2L4LFpwZrcTg2BJj",
   }
 
   return (
