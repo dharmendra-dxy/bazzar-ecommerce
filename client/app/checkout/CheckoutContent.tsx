@@ -14,6 +14,8 @@ import { useProductStore } from "@/store/useProduct.store";
 import Image from "next/image";
 import { Separator } from "@/components/ui/separator";
 import { Coupon, useCouponStore } from "@/store/useCoupon.store";
+import { paymentAction } from "@/actions/payment.action";
+import { toast } from "sonner";
 
 const CheckoutContent = () => {
 
@@ -93,10 +95,21 @@ const CheckoutContent = () => {
     setCouponError(null);
   }
 
+  // handlePrePaymentFlow:
+  const handlePrePaymentFlow = async() => {
+    const result = await paymentAction(checkoutEmail);
+    if(!result.success){
+      toast.error(result.error);
+      return;
+    }
+
+    setShowPaymentFlow(true);
+  }
+
   const subTotal = cartItemsDetails.reduce((acc, item) => acc + Number(item.product?.price || 0) * item.quantity, 0);
   const discountAmount = appliedCoupon ? (subTotal * appliedCoupon?.discountPercent) / 100 : 0;
   const total = subTotal - discountAmount;
-
+  
   return (
     <div className="min-h-screen p-2 md:p-8">
       <div className="container mx-auto px-6">
@@ -186,6 +199,7 @@ const CheckoutContent = () => {
                       <Button
                         type="button"
                         className="w-full"
+                        onClick={handlePrePaymentFlow}
                       >
                         Procced to Pay
                       </Button>
