@@ -1,3 +1,4 @@
+import Image from "next/image";
 import React, { useEffect, useState } from "react";
 import { useAddressStore } from "@/store/useAddress";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -11,7 +12,6 @@ import { PayPalButtons } from "@paypal/react-paypal-js";
 import { Input } from "@/components/ui/input";
 import { CartItem, useCartStore } from "@/store/useCart.store";
 import { useProductStore } from "@/store/useProduct.store";
-import Image from "next/image";
 import { Separator } from "@/components/ui/separator";
 import { Coupon, useCouponStore } from "@/store/useCoupon.store";
 import { paymentAction } from "@/actions/payment.action";
