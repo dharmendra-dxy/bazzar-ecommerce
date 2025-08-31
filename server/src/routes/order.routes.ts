@@ -12,7 +12,7 @@ router.post("/create-paypal-order", createPaypalOrder);
 router.post("/capture-paypal-order", capturePaypalOrder);
 router.post("/create-final-order", createFinalOrder);
 
-router.get("/get-order", getOrder);
+router.get("/get-order/:orderId", getOrder);
 router.get("/get-order-by-userid", getOrdersByUserId);
 router.get("/get-all-order", isSuperAdmin,getAllOrdersForAdmin);
 
