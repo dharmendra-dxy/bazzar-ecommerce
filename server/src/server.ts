@@ -8,6 +8,7 @@ import authRoutes from './routes/auth.routes';
 import addressRoutes from './routes/address.routes';
 import cartRoutes from './routes/cart.routes';
 import couponRoutes from './routes/coupon.routes';
+import orderRoutes from './routes/order.routes';
 import productRoutes from './routes/product.routes';
 import settingRoutes from './routes/setting.routes';
 
@@ -35,6 +36,7 @@ app.use('/api/auth', authRoutes);
 app.use('/api/address', addressRoutes);
 app.use('/api/carts', cartRoutes);
 app.use('/api/coupons', couponRoutes);
+app.use('/api/orders', orderRoutes);
 app.use('/api/products', productRoutes);
 app.use('/api/settings', settingRoutes);
 app.get('/', (req,res) =>{ 
